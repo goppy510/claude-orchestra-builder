@@ -81,23 +81,19 @@ AI構成を選択してください:
 4. Full (Claude + Codex + Gemini) — フル構成
 ```
 
-If Codex or Gemini selected, run the following checks:
+If Codex or Gemini selected, run the following checks automatically via Bash:
 
 **1. Installation check:**
-- Run `codex --version` / `gemini --version`
-- If not installed, show install instructions and ask user to install:
-  - Codex: `npm install -g @openai/codex`
-  - Gemini: `npm install -g @anthropic-ai/gemini` (or appropriate package)
+- Run `codex --version` / `gemini --version` via Bash
+- If command not found, ask user whether to install now:
+  - Codex: run `npm install -g @openai/codex`
+  - Gemini: run `npm install -g @anthropic-ai/gemini` (or appropriate package)
 
 **2. Version check and upgrade:**
-- Run `npm outdated -g @openai/codex` / `npm outdated -g @anthropic-ai/gemini` to check for updates
-- If a newer version is available, show current vs latest and ask:
-  ```
-  Codex CLI v1.2.3 がインストールされています。最新は v1.3.0 です。
-  アップグレードしますか？ (y/n)
-  ```
-- If user agrees, run: `npm update -g @openai/codex` / `npm update -g @anthropic-ai/gemini`
-- Verify upgrade: re-run `--version` and confirm
+- Run `npm outdated -g @openai/codex` / `npm outdated -g @anthropic-ai/gemini` via Bash
+- If a newer version is available, show current vs latest and ask whether to upgrade
+- If user agrees, run `npm update -g @openai/codex` / `npm update -g @anthropic-ai/gemini` via Bash
+- Re-run `--version` via Bash to verify
 
 **3. Authentication check:**
 - Codex: Ask which auth method they use:
@@ -107,10 +103,12 @@ If Codex or Gemini selected, run the following checks:
   2. OpenAI APIキー
   ```
   - If ChatGPT: confirm they have an active plan. Auth is handled by `codex` login prompt at first run.
-  - If API key: `test -n "$OPENAI_API_KEY" && echo "configured" || echo "not configured"`
-- Gemini: `test -n "$GOOGLE_API_KEY" && echo "configured" || echo "not configured"`
+  - If API key: run `test -n "$OPENAI_API_KEY" && echo "configured" || echo "not configured"` via Bash
+- Gemini: run `test -n "$GOOGLE_API_KEY" && echo "configured" || echo "not configured"` via Bash
 - NEVER run `echo $OPENAI_API_KEY` or `echo $GOOGLE_API_KEY` — this exposes the key value in context
 - If not configured, show setup instructions and ask user to configure before proceeding
+
+All checks in this step are executed by Claude via Bash tool — do not ask the user to run commands manually.
 
 **Step 4 — Workflow preferences:**
 - Agent configuration is auto-determined from AI tool selection:
