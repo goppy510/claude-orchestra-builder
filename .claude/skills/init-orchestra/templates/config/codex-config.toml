@@ -1,0 +1,12 @@
+model = "gpt-5.4"
+reasoning_effort = "high"
+reasoning_summary = "detailed"
+web_search = "live"
+approval_policy = "never"
+
+[skills]
+enabled = true
+path = ".codex/skills/context-loader"
+
+[output]
+verbosity = "medium"
