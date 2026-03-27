@@ -37,6 +37,16 @@ ln -s "$(pwd)/.claude/skills/init-orchestra" ~/.claude/skills/init-orchestra
 3. **ワークフロー** — ソロ/チーム、CI/CD、用途、自動化レベル
 4. **確認** — 生成ファイル一覧を表示後、実行
 
+## Language Policy
+
+生成されるファイル（CLAUDE.md, skills, agents, rules 等）は**すべて英語**で記述されます。
+
+- **英語にする理由**: 日本語に比べてトークン消費が約半分で済み、Claude の指示遵守精度も高い傾向があります。CLAUDE.md は毎セッション読み込まれるため、この差が蓄積します
+- **ユーザーとのやり取りは日本語（敬語）** です。Claude への質問、Claude からの回答はすべて日本語で行われます
+- コード内のコメントは英語です
+
+つまり「内部処理は英語、対話は日本語」という使い分けです。
+
 ## Generated Structure
 
 選択内容に応じて以下のファイルが生成されます:
