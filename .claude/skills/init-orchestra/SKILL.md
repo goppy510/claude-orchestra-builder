@@ -100,8 +100,9 @@ If Codex or Gemini selected, run the following checks:
 - Verify upgrade: re-run `--version` and confirm
 
 **3. API key check:**
-- Codex: `echo $OPENAI_API_KEY` should return a value
-- Gemini: `echo $GOOGLE_API_KEY` should return a value
+- Codex: `test -n "$OPENAI_API_KEY" && echo "configured" || echo "not configured"`
+- Gemini: `test -n "$GOOGLE_API_KEY" && echo "configured" || echo "not configured"`
+- NEVER run `echo $OPENAI_API_KEY` or `echo $GOOGLE_API_KEY` — this exposes the key value in context
 - If not configured, show setup instructions and ask user to configure before proceeding
 
 **Step 4 — Workflow preferences:**
