@@ -81,11 +81,27 @@ AI構成を選択してください:
 4. Full (Claude + Codex + Gemini) — フル構成
 ```
 
-If Codex or Gemini selected:
-- Confirm CLI is installed (`codex --version` / `gemini --version`)
-- Confirm API key is configured in shell environment:
-  - Codex: `echo $OPENAI_API_KEY` should return a value
-  - Gemini: `echo $GOOGLE_API_KEY` should return a value
+If Codex or Gemini selected, run the following checks:
+
+**1. Installation check:**
+- Run `codex --version` / `gemini --version`
+- If not installed, show install instructions and ask user to install:
+  - Codex: `npm install -g @openai/codex`
+  - Gemini: `npm install -g @anthropic-ai/gemini` (or appropriate package)
+
+**2. Version check and upgrade:**
+- Run `npm outdated -g @openai/codex` / `npm outdated -g @anthropic-ai/gemini` to check for updates
+- If a newer version is available, show current vs latest and ask:
+  ```
+  Codex CLI v1.2.3 がインストールされています。最新は v1.3.0 です。
+  アップグレードしますか？ (y/n)
+  ```
+- If user agrees, run: `npm update -g @openai/codex` / `npm update -g @anthropic-ai/gemini`
+- Verify upgrade: re-run `--version` and confirm
+
+**3. API key check:**
+- Codex: `echo $OPENAI_API_KEY` should return a value
+- Gemini: `echo $GOOGLE_API_KEY` should return a value
 - If not configured, show setup instructions and ask user to configure before proceeding
 
 **Step 4 — Workflow preferences:**
