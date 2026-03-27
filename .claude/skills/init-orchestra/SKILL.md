@@ -34,8 +34,8 @@ Merge: template (top) + base (bottom). Final result must be under 30 lines.
 | Template | Target (relative to target-path) | When |
 |----------|--------|------|
 | `@templates/skills/plan-SKILL.md` | `.claude/skills/plan/SKILL.md` | Always |
-| `@templates/skills/review-SKILL.md` | `.claude/skills/review/SKILL.md` | Solo mode |
-| `@templates/skills/review-team-SKILL.md` | `.claude/skills/review/SKILL.md` | Team mode |
+| `@templates/skills/review-SKILL.md` | `.claude/skills/review/SKILL.md` | Single session |
+| `@templates/skills/review-team-SKILL.md` | `.claude/skills/review/SKILL.md` | Multi-agent |
 | `@templates/agents/codex-assistant.md` | `.claude/agents/codex-assistant.md` | Codex selected |
 | `@templates/rules/codex-delegation.md` | `.claude/rules/codex-delegation.md` | Codex selected |
 | `@templates/skills/add-feature-SKILL.md` | `.claude/skills/add-feature/SKILL.md` | Codex selected |
@@ -89,7 +89,10 @@ If Codex or Gemini selected:
 - If not configured, show setup instructions and ask user to configure before proceeding
 
 **Step 4 — Workflow preferences:**
-- Solo developer or team?
+- Agent configuration is auto-determined from AI tool selection:
+  - Claude only → **Single session** (solo review template)
+  - Claude + Codex/Gemini/Full → **Multi-agent** (team review template with parallel reviewers)
+  - Show the auto-determined result and allow user to override
 - CI/CD integration needed?
 - Primary use case: new development / maintenance / analysis / mixed
 - Level of automation: minimal / standard / full
@@ -117,7 +120,7 @@ Generate files under `<target-path>`. Follow `@.claude/rules/generation-quality.
 - `<target>/.claude/rules/testing.md` — generated for user's test framework. Max 15 lines.
 - `<target>/.claude/docs/.gitkeep` — empty file
 - `<target>/.claude/skills/plan/SKILL.md` — copied from template
-- `<target>/.claude/skills/review/SKILL.md` — solo or team template
+- `<target>/.claude/skills/review/SKILL.md` — single-session or multi-agent template
 
 **docs/ structure (varies by AI tool selection):**
 - Claude only → `docs/` (flat)
