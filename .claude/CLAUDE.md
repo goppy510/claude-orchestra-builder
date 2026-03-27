@@ -16,6 +16,9 @@ Interactive scaffolder for Claude Code orchestration environments.
 - Sub-agents: https://code.claude.com/docs/ja/sub-agents
 - Permissions: https://code.claude.com/docs/ja/permissions
 
+## Commands
+- This is a configuration-only project — no build/test/lint commands
+
 ## Principles
 - Implement via skills (follow each SKILL.md)
 - Generated files must follow official best practices

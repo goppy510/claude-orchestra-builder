@@ -58,22 +58,26 @@ def detect_route(prompt: str) -> str | None:
 
 def main():
     input_data = json.load(sys.stdin)
-    prompt = input_data.get("user_prompt", "")
+    prompt = input_data.get("prompt", "")
 
     route = detect_route(prompt)
 
     if route == "codex":
         output = {
-            "decision": "allow",
-            "reason": "[Router] This looks like a design/debug task. Consider using the codex-assistant agent.",
+            "hookSpecificOutput": {
+                "hookEventName": "UserPromptSubmit",
+                "additionalContext": "[Router] This looks like a design/debug task. Consider using the codex-assistant agent.",
+            }
         }
     elif route == "gemini":
         output = {
-            "decision": "allow",
-            "reason": "[Router] Multimodal content detected. Consider using the gemini-multimodal agent.",
+            "hookSpecificOutput": {
+                "hookEventName": "UserPromptSubmit",
+                "additionalContext": "[Router] Multimodal content detected. Consider using the gemini-multimodal agent.",
+            }
         }
     else:
-        output = {"decision": "allow"}
+        output = {}
 
     json.dump(output, sys.stdout)
 

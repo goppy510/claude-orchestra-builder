@@ -1,0 +1,14 @@
+## Language policy
+- Internal documents (CLAUDE.md, rules, skills, agents): English
+- User-facing responses: Japanese (敬語)
+- Code comments: English
+
+## References
+- Best practices: https://code.claude.com/docs/ja/best-practices
+- Skills: https://code.claude.com/docs/ja/skills
+- Hooks: https://code.claude.com/docs/ja/hooks-guide
+- Sub-agents: https://code.claude.com/docs/ja/sub-agents
+
+## Principles
+- Keep CLAUDE.md concise — if removing a line doesn't cause mistakes, remove it
+- Use skills for workflows, rules for conventions, docs for large outputs

@@ -2,15 +2,7 @@
 
 {{PROJECT_DESCRIPTION}}
 
-## Language policy
-- Internal documents (CLAUDE.md, rules, skills, agents): English
-- User-facing responses: Japanese (敬語)
-- Code comments: English
-
 ## Commands
 - Build: {{BUILD_COMMAND}}
 - Test: {{TEST_COMMAND}}
 - Lint: {{LINT_COMMAND}}
-
-## References
-- Best practices: https://code.claude.com/docs/ja/best-practices

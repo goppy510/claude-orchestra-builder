@@ -1,3 +1,8 @@
+---
+name: context-loader
+description: Load shared knowledge base from .claude/docs/ before starting work
+---
+
 # Context Loader
 
 Load shared knowledge base from `.claude/docs/` before starting work.

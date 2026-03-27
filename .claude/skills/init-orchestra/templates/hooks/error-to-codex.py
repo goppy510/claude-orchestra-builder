@@ -49,15 +49,18 @@ def has_error(output: str) -> bool:
 
 def main():
     input_data = json.load(sys.stdin)
-    tool_output = input_data.get("tool_output", "")
+    tool_response = input_data.get("tool_response", {})
+    tool_output = tool_response if isinstance(tool_response, str) else str(tool_response)
 
     if has_error(tool_output):
         output = {
-            "decision": "allow",
-            "reason": "[ErrorDetector] Error detected in output. Consider using the codex-assistant agent for root cause analysis.",
+            "hookSpecificOutput": {
+                "hookEventName": "PostToolUse",
+                "additionalContext": "[ErrorDetector] Error detected in output. Consider using the codex-assistant agent for root cause analysis.",
+            }
         }
     else:
-        output = {"decision": "allow"}
+        output = {}
 
     json.dump(output, sys.stdout)
 
