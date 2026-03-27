@@ -81,7 +81,12 @@ AI構成を選択してください:
 4. Full (Claude + Codex + Gemini) — フル構成
 ```
 
-If Codex or Gemini selected, confirm CLI is installed.
+If Codex or Gemini selected:
+- Confirm CLI is installed (`codex --version` / `gemini --version`)
+- Confirm API key is configured in shell environment:
+  - Codex: `echo $OPENAI_API_KEY` should return a value
+  - Gemini: `echo $GOOGLE_API_KEY` should return a value
+- If not configured, show setup instructions and ask user to configure before proceeding
 
 **Step 4 — Workflow preferences:**
 - Solo developer or team?
@@ -139,6 +144,17 @@ Generate files under `<target-path>`. Follow `@.claude/rules/generation-quality.
 - `.claude/skills/startproject/SKILL.md` — copied
 - `.claude/agents/general-purpose.md` — copied
 - Register hooks in `<target>/.claude/settings.json`
+- Generate `<target>/.claude/settings.json` with security permissions:
+  ```json
+  {
+    "permissions": {
+      "deny": [
+        "Read(.env*)", "Read(*secret*)", "Read(*key*)", "Read(*.pem)",
+        "Read(credentials*)", "Read(~/.ssh/**)", "Read(~/.aws/**)"
+      ]
+    }
+  }
+  ```
 
 **Automation level adjustments:**
 - **minimal**: CLAUDE.md + rules + basic skills (plan, review). No agents, no hooks.
@@ -164,7 +180,16 @@ If any check fails, fix immediately before proceeding.
    - Run `/permissions` to whitelist safe commands
    - Consider auto mode: `claude --permission-mode auto`
    - Consider sandbox mode: `/sandbox`
-4. Suggest next steps:
+4. If Codex or Gemini selected, show API key setup reminder:
+   ```
+   # Codex CLI (add to ~/.zshrc or ~/.bashrc)
+   export OPENAI_API_KEY=sk-...
+
+   # Gemini CLI (add to ~/.zshrc or ~/.bashrc)
+   export GOOGLE_API_KEY=...
+   ```
+   Warn: NEVER store API keys in project files (.env, config, etc.)
+5. Suggest next steps:
    - `cd <target-path> && claude` to start using
    - `/plan` for the first task
    - If Codex: verify `codex --version`
@@ -180,4 +205,6 @@ If any check fails, fix immediately before proceeding.
 - Each skill must have proper frontmatter (name, description)
 - Each agent must have proper frontmatter (name, description, tools, model)
 - Hooks must be executable Python scripts with correct stdin/stdout JSON format
+- NEVER store API keys, secrets, or credentials in generated project files
+- Always generate settings.json with deny rules for sensitive files
 - Follow https://code.claude.com/docs/ja/best-practices strictly
