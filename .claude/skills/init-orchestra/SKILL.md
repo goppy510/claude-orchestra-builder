@@ -99,8 +99,15 @@ If Codex or Gemini selected, run the following checks:
 - If user agrees, run: `npm update -g @openai/codex` / `npm update -g @anthropic-ai/gemini`
 - Verify upgrade: re-run `--version` and confirm
 
-**3. API key check:**
-- Codex: `test -n "$OPENAI_API_KEY" && echo "configured" || echo "not configured"`
+**3. Authentication check:**
+- Codex: Ask which auth method they use:
+  ```
+  Codex CLIの認証方法を選択してください:
+  1. ChatGPTアカウント（推奨）— Plus/Pro/Team/Edu/Enterprise
+  2. OpenAI APIキー
+  ```
+  - If ChatGPT: confirm they have an active plan. Auth is handled by `codex` login prompt at first run.
+  - If API key: `test -n "$OPENAI_API_KEY" && echo "configured" || echo "not configured"`
 - Gemini: `test -n "$GOOGLE_API_KEY" && echo "configured" || echo "not configured"`
 - NEVER run `echo $OPENAI_API_KEY` or `echo $GOOGLE_API_KEY` — this exposes the key value in context
 - If not configured, show setup instructions and ask user to configure before proceeding
@@ -200,10 +207,11 @@ If any check fails, fix immediately before proceeding.
    - Run `/permissions` to whitelist safe commands
    - Consider auto mode: `claude --permission-mode auto`
    - Consider sandbox mode: `/sandbox`
-4. If Codex or Gemini selected, show API key setup reminder:
+4. If Codex or Gemini selected, show auth setup reminder:
    ```
-   # Codex CLI (add to ~/.zshrc or ~/.bashrc)
-   export OPENAI_API_KEY=sk-...
+   # Codex CLI — choose one:
+   #   Option A (推奨): codex を実行して「Sign in with ChatGPT」を選択
+   #   Option B: export OPENAI_API_KEY=sk-...  (add to ~/.zshrc or ~/.bashrc)
 
    # Gemini CLI (add to ~/.zshrc or ~/.bashrc)
    export GOOGLE_API_KEY=...

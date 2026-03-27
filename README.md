@@ -98,16 +98,29 @@ ln -s "$(pwd)/.claude/skills/init-orchestra" ~/.claude/skills/init-orchestra
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/download) がインストール済みであること
-- Codex を使う場合: `codex` CLI + `OPENAI_API_KEY` 環境変数
+- Codex を使う場合: `codex` CLI + 認証（下記参照）
 - Gemini を使う場合: `gemini` CLI + `GOOGLE_API_KEY` 環境変数
 
-API キーはシェル環境変数に設定してください。プロジェクトファイルには保存しないでください。
+### Codex CLI の認証
+
+2つの方法があります:
 
 ```bash
-# ~/.zshrc or ~/.bashrc
-export OPENAI_API_KEY=sk-...
-export GOOGLE_API_KEY=...
+# 方法A（推奨）: ChatGPTアカウントでログイン
+# Plus/Pro/Team/Edu/Enterprise プランが必要
+codex  # 初回実行時に「Sign in with ChatGPT」を選択
+
+# 方法B: OpenAI APIキーを使用
+export OPENAI_API_KEY=sk-...  # ~/.zshrc or ~/.bashrc に追加
 ```
+
+### Gemini CLI の認証
+
+```bash
+export GOOGLE_API_KEY=...  # ~/.zshrc or ~/.bashrc に追加
+```
+
+API キーを使う場合はシェル環境変数に設定してください。プロジェクトファイルには保存しないでください。
 
 ## References
 
