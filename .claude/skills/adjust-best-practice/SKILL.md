@@ -1,6 +1,7 @@
 ---
 name: adjust-best-practice
 description: Audit and fix project configuration against official Claude Code best practices
+disable-model-invocation: true
 ---
 
 # Adjust Best Practice
@@ -11,9 +12,9 @@ Respond to user in Japanese (敬語). Analysis output in Japanese.
 ## Usage
 
 ```
-/adjust-best-practice                  # Fetch and summarize all best practices
+/adjust-best-practice                  # Audit and fix current project against best practices
 /adjust-best-practice <topic>          # Focus: skills, hooks, agents, rules, permissions
-/adjust-best-practice <project-path>   # Audit project config against best practices
+/adjust-best-practice <project-path>   # Audit and fix project at given path
 ```
 
 When called from another skill (e.g., init-orchestra), `$ARGUMENTS` may contain a topic or path.
@@ -36,9 +37,9 @@ Fetch these pages via WebFetch (launch in parallel where possible):
 ### Step 1: Determine mode
 
 Parse `$ARGUMENTS`:
-- Empty → **summary mode** (fetch all, summarize)
-- Known topic (`skills`, `hooks`, `agents`, `rules`, `permissions`) → **topic mode** (fetch relevant subset)
-- Existing directory path → **audit mode** (fetch all + analyze project)
+- Empty → **audit mode on current project** (use current working directory as target)
+- Known topic (`skills`, `hooks`, `agents`, `rules`, `permissions`) → **topic mode** (fetch relevant subset, summarize)
+- Existing directory path → **audit mode** (fetch all + analyze project at given path)
 
 ### Step 2: Fetch documentation
 

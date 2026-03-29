@@ -1,0 +1,192 @@
+# Workflow Phases
+
+## Phase 1: Interview
+
+Use AskUserQuestion to gather information step by step. Ask one group at a time.
+
+**Step 1 — Target path:**
+If `$ARGUMENTS` is provided, use it as the target path. Otherwise ask:
+- Target project path (absolute or relative)
+- Validate the path exists. If not, ask whether to create it.
+
+**Step 2 — Project basics:**
+- Project name and brief description
+- Primary language(s) and framework(s)
+- Monorepo or single project?
+- Existing project or starting fresh?
+- If existing: detect build/test/lint commands from package.json, Makefile, Cargo.toml, etc.
+
+**Step 3 — AI tool selection:**
+Present these options:
+
+```
+AI構成を選択してください:
+
+1. Claude only        — Claude Code単体で開発
+2. Claude + Codex     — 設計・計画・デバッグにCodex CLIを活用
+3. Claude + Gemini    — PDF・画像・動画などマルチモーダル処理を追加
+4. Full (Claude + Codex + Gemini) — フル構成
+```
+
+If Codex or Gemini selected, run the following checks automatically via Bash:
+
+**1. Installation check:**
+- Run `codex --version` / `gemini --version` via Bash
+- If command not found, ask user whether to install now:
+  - Codex: run `npm install -g @openai/codex`
+  - Gemini: run `npm install -g @anthropic-ai/gemini` (or appropriate package)
+
+**2. Version check and upgrade:**
+- Run `npm outdated -g @openai/codex` / `npm outdated -g @anthropic-ai/gemini` via Bash
+- If a newer version is available, show current vs latest and ask whether to upgrade
+- If user agrees, run `npm update -g @openai/codex` / `npm update -g @anthropic-ai/gemini` via Bash
+- Re-run `--version` via Bash to verify
+
+**3. Authentication check:**
+- Codex: Ask which auth method they use:
+  ```
+  Codex CLIの認証方法を選択してください:
+  1. ChatGPTアカウント（推奨）— Plus/Pro/Team/Edu/Enterprise
+  2. OpenAI APIキー
+  ```
+  - If ChatGPT: confirm they have an active plan. Auth is handled by `codex` login prompt at first run.
+  - If API key: run `test -n "$OPENAI_API_KEY" && echo "configured" || echo "not configured"` via Bash
+- Gemini: run `test -n "$GOOGLE_API_KEY" && echo "configured" || echo "not configured"` via Bash
+- NEVER run `echo $OPENAI_API_KEY` or `echo $GOOGLE_API_KEY` — this exposes the key value in context
+- If not configured, show setup instructions and ask user to configure before proceeding
+
+All checks in this step are executed by Claude via Bash tool — do not ask the user to run commands manually.
+
+**Step 4 — Workflow preferences:**
+- Agent configuration is auto-determined from AI tool selection:
+  - Claude only → **Single session** (solo review template)
+  - Claude + Codex/Gemini/Full → **Multi-agent** (team review template with parallel reviewers)
+  - Show the auto-determined result and allow user to override
+- CI/CD integration needed?
+- Primary use case: new development / maintenance / analysis / mixed
+- Level of automation: minimal / standard / full
+
+**Step 5 — Confirmation:**
+Show a summary table of all selections and the files to be generated. Ask for confirmation.
+
+## Phase 2: Generation
+
+Generate files under `<target-path>`. Follow `@.claude/rules/generation-quality.md`.
+
+**Step 0 — Fetch best practices:**
+Run `/adjust-best-practice` to fetch the latest official documentation.
+Use the extracted patterns to inform generation of `rules/coding.md`, `rules/testing.md`, and any from-scratch files.
+
+**Strategy: copy then customize.**
+1. Create directory structure under `<target-path>`
+2. Copy relevant templates (based on selections) to their target paths
+3. Customize only what needs project-specific changes:
+   - CLAUDE.md: merge template (with placeholders replaced) + base
+   - `rules/coding.md`: generate based on user's language/framework (no template — language-specific)
+   - `rules/testing.md`: generate based on user's test framework (no template — framework-specific)
+   - `hooks/agent-router.py`: adjust keyword patterns for user's stack
+4. Leave all other copied templates as-is (they are already production-ready)
+
+**Always generated (all configurations):**
+- `<target>/.claude/CLAUDE.md` — merged from template + base. Max 30 lines.
+- `<target>/.claude/rules/coding.md` — generated for user's language. Max 20 lines.
+- `<target>/.claude/rules/testing.md` — generated for user's test framework. Max 15 lines.
+- `<target>/.claude/docs/.gitkeep` — empty file
+- `<target>/.claude/skills/plan/SKILL.md` — copied from template
+- `<target>/.claude/skills/review/SKILL.md` — single-session or multi-agent template
+
+**docs/ structure (varies by AI tool selection):**
+- Claude only → `docs/` (flat)
+- +Codex → `docs/` + `docs/libraries/`+ `docs/DESIGN.md`
+- +Gemini → `docs/` + `docs/research/` + `docs/DESIGN.md`
+- Full → `docs/` + `docs/research/` + `docs/libraries/` + `docs/DESIGN.md`
+
+**Codex-related (when Codex selected):**
+- `.claude/agents/codex-assistant.md` — copied
+- `.claude/rules/codex-delegation.md` — copied
+- `.claude/skills/add-feature/SKILL.md` — copied
+- `.codex/config.toml` — copied (project root)
+- `.codex/skills/context-loader/SKILL.md` — copied (project root)
+
+**Gemini-related (when Gemini selected):**
+- `.claude/agents/gemini-multimodal.md` — copied
+- `.claude/skills/analyze-media/SKILL.md` — copied
+- `.gemini/GEMINI.md` — copied (project root)
+- `.gemini/skills/context-loader/SKILL.md` — copied (project root)
+
+**Full automation additions:**
+- `.claude/hooks/agent-router.py` — copied, then customize keywords for user's stack
+- `.claude/hooks/error-to-codex.py` — copied (only if Codex selected)
+- `.claude/skills/startproject/SKILL.md` — copied
+- `.claude/agents/general-purpose.md` — copied
+- Register hooks in `<target>/.claude/settings.json`
+- Generate `<target>/.claude/settings.json` with security permissions:
+  ```json
+  {
+    "permissions": {
+      "deny": [
+        "Read(.env*)", "Read(*secret*)", "Read(*key*)", "Read(*.pem)",
+        "Read(credentials*)", "Read(~/.ssh/**)", "Read(~/.aws/**)"
+      ]
+    }
+  }
+  ```
+
+**Automation level adjustments:**
+- **minimal**: CLAUDE.md + rules + basic skills (plan, review). No agents, no hooks.
+- **standard**: Above + agents + workflow skills. No hooks.
+- **full**: Everything including hooks and settings.json.
+
+## Phase 3: Validation
+
+**Step 1 — Structure check:**
+Verify each generated file at `<target-path>`:
+- Skills have frontmatter (name, description)
+- Agents have frontmatter (name, description, tools, model)
+- CLAUDE.md is under 30 lines
+- Hooks have shebang (`#!/usr/bin/env python3`)
+- All directories exist
+
+If any check fails, fix immediately before proceeding.
+
+**Step 2 — Best practices audit:**
+Run `/adjust-best-practice <target-path>` in audit mode to check all generated files against latest official documentation.
+
+For each non-conformant file detected:
+1. Show the file path, issue description, and recommended fix
+2. Ask the user via AskUserQuestion: 修正しますか？ (Y/n)
+3. If yes, apply the fix automatically
+4. If no, skip and move to the next issue
+
+After all issues are resolved or skipped, show a summary:
+```
+## ベストプラクティス監査結果
+- 検査ファイル数: N
+- 準拠: X
+- 修正済み: Y
+- スキップ: Z
+```
+
+## Phase 4: Post-generation
+
+1. Show a tree of all generated files under `<target-path>`
+2. If hooks were generated, show the settings.json hook registration and remind user to review
+3. Suggest permission setup:
+   - Run `/permissions` to whitelist safe commands
+   - Consider auto mode: `claude --permission-mode auto`
+   - Consider sandbox mode: `/sandbox`
+4. If Codex or Gemini selected, show auth setup reminder:
+   ```
+   # Codex CLI — choose one:
+   #   Option A (推奨): codex を実行して「Sign in with ChatGPT」を選択
+   #   Option B: export OPENAI_API_KEY=sk-...  (add to ~/.zshrc or ~/.bashrc)
+
+   # Gemini CLI (add to ~/.zshrc or ~/.bashrc)
+   export GOOGLE_API_KEY=...
+   ```
+   Warn: NEVER store API keys in project files (.env, config, etc.)
+5. Suggest next steps:
+   - `cd <target-path> && claude` to start using
+   - `/plan` for the first task
+   - If Codex: verify `codex --version`
+   - If Gemini: verify `gemini` works
