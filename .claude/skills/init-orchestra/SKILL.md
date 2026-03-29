@@ -126,6 +126,10 @@ Show a summary table of all selections and the files to be generated. Ask for co
 
 Generate files under `<target-path>`. Follow `@.claude/rules/generation-quality.md`.
 
+**Step 0 — Fetch best practices:**
+Run `/search-best-practice` to fetch the latest official documentation.
+Use the extracted patterns to inform generation of `rules/coding.md`, `rules/testing.md`, and any from-scratch files.
+
 **Strategy: copy then customize.**
 1. Create directory structure under `<target-path>`
 2. Copy relevant templates (based on selections) to their target paths
@@ -188,6 +192,7 @@ Generate files under `<target-path>`. Follow `@.claude/rules/generation-quality.
 
 ### Phase 3: Validation
 
+**Step 1 — Structure check:**
 Verify each generated file at `<target-path>`:
 - Skills have frontmatter (name, description)
 - Agents have frontmatter (name, description, tools, model)
@@ -196,6 +201,24 @@ Verify each generated file at `<target-path>`:
 - All directories exist
 
 If any check fails, fix immediately before proceeding.
+
+**Step 2 — Best practices audit:**
+Run `/search-best-practice <target-path>` in audit mode to check all generated files against latest official documentation.
+
+For each non-conformant file detected:
+1. Show the file path, issue description, and recommended fix
+2. Ask the user via AskUserQuestion: 修正しますか？ (Y/n)
+3. If yes, apply the fix automatically
+4. If no, skip and move to the next issue
+
+After all issues are resolved or skipped, show a summary:
+```
+## ベストプラクティス監査結果
+- 検査ファイル数: N
+- 準拠: X
+- 修正済み: Y
+- スキップ: Z
+```
 
 ### Phase 4: Post-generation
 
@@ -233,4 +256,4 @@ If any check fails, fix immediately before proceeding.
 - Hooks must be executable Python scripts with correct stdin/stdout JSON format
 - NEVER store API keys, secrets, or credentials in generated project files
 - Always generate settings.json with deny rules for sensitive files
-- Follow https://code.claude.com/docs/ja/best-practices strictly
+- Use `/search-best-practice` output to align generated files with latest official best practices
