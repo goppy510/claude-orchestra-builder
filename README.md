@@ -27,12 +27,12 @@ zip や tarball を受け取り、展開してください。
 
 ### グローバルスキルとして登録
 
-`~/.claude/skills/` にコピーすると、**どのプロジェクトからでも** `/init-orchestra` と `/search-best-practice` が使えるようになります。
+`~/.claude/skills/` にコピーすると、**どのプロジェクトからでも** `/init-orchestra` と `/adjust-best-practice` が使えるようになります。
 
 ```bash
 cd claude-orchestra-builder
 cp -r .claude/skills/init-orchestra ~/.claude/skills/
-cp -r .claude/skills/search-best-practice ~/.claude/skills/
+cp -r .claude/skills/adjust-best-practice ~/.claude/skills/
 ```
 
 ## Usage

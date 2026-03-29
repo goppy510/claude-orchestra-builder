@@ -1,9 +1,9 @@
 ---
-name: search-best-practice
-description: Fetch and analyze official Claude Code best practices docs to inform skills, hooks, rules, and agent configuration
+name: adjust-best-practice
+description: Audit and fix project configuration against official Claude Code best practices
 ---
 
-# Search Best Practice
+# Adjust Best Practice
 
 Fetch official Claude Code documentation, extract actionable patterns, and apply them to project configuration.
 Respond to user in Japanese (敬語). Analysis output in Japanese.
@@ -11,9 +11,9 @@ Respond to user in Japanese (敬語). Analysis output in Japanese.
 ## Usage
 
 ```
-/search-best-practice                  # Fetch and summarize all best practices
-/search-best-practice <topic>          # Focus: skills, hooks, agents, rules, permissions
-/search-best-practice <project-path>   # Audit project config against best practices
+/adjust-best-practice                  # Fetch and summarize all best practices
+/adjust-best-practice <topic>          # Focus: skills, hooks, agents, rules, permissions
+/adjust-best-practice <project-path>   # Audit project config against best practices
 ```
 
 When called from another skill (e.g., init-orchestra), `$ARGUMENTS` may contain a topic or path.
@@ -71,9 +71,26 @@ From fetched content, extract and organize by category:
 1. Read existing CLAUDE.md, rules/, skills/, agents/, hooks/ if present
 2. Compare each against extracted patterns
 3. Report findings as: conformant / needs improvement / missing
-4. Suggest specific fixes with code examples
+4. For each non-conformant file, suggest specific fixes with code examples
 
-## Output format (audit mode)
+### Step 5: Interactive fix (audit mode only)
+
+After presenting the audit report, for each issue in △ (improvement) and ✗ (missing):
+1. Show the file path, issue description, and the concrete diff or content to apply
+2. Ask the user via AskUserQuestion: `この問題を修正しますか？ (Y/n)`
+3. If yes → apply the fix automatically (Edit or Write the file)
+4. If no → skip and move to the next issue
+
+After all issues are processed, show a summary:
+```
+## ベストプラクティス監査結果
+- 検査ファイル数: N
+- 準拠: X
+- 修正済み: Y
+- スキップ: Z
+```
+
+## Output format (audit report)
 
 ```
 ## 監査結果: <project-path>
@@ -92,5 +109,5 @@ From fetched content, extract and organize by category:
 
 - Always fetch live documentation — never rely on cached or assumed content
 - Keep analysis actionable: every finding should have a clear recommendation
-- In audit mode, do not modify files — only report and suggest
-- When called from init-orchestra, return structured findings for the caller to apply
+- In audit mode, always proceed to Step 5 (interactive fix) after showing the report
+- When called from init-orchestra, the caller handles the fix flow — skip Step 5
