@@ -1,0 +1,8 @@
+# {{PROJECT_NAME}}
+
+{{PROJECT_DESCRIPTION}}
+
+## Commands
+- Build: {{BUILD_COMMAND}}
+- Test: {{TEST_COMMAND}}
+- Lint: {{LINT_COMMAND}}
