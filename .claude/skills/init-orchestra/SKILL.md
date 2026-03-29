@@ -127,7 +127,7 @@ Show a summary table of all selections and the files to be generated. Ask for co
 Generate files under `<target-path>`. Follow `@.claude/rules/generation-quality.md`.
 
 **Step 0 — Fetch best practices:**
-Run `/search-best-practice` to fetch the latest official documentation.
+Run `/adjust-best-practice` to fetch the latest official documentation.
 Use the extracted patterns to inform generation of `rules/coding.md`, `rules/testing.md`, and any from-scratch files.
 
 **Strategy: copy then customize.**
@@ -203,7 +203,7 @@ Verify each generated file at `<target-path>`:
 If any check fails, fix immediately before proceeding.
 
 **Step 2 — Best practices audit:**
-Run `/search-best-practice <target-path>` in audit mode to check all generated files against latest official documentation.
+Run `/adjust-best-practice <target-path>` in audit mode to check all generated files against latest official documentation.
 
 For each non-conformant file detected:
 1. Show the file path, issue description, and recommended fix
@@ -256,4 +256,4 @@ After all issues are resolved or skipped, show a summary:
 - Hooks must be executable Python scripts with correct stdin/stdout JSON format
 - NEVER store API keys, secrets, or credentials in generated project files
 - Always generate settings.json with deny rules for sensitive files
-- Use `/search-best-practice` output to align generated files with latest official best practices
+- Use `/adjust-best-practice` output to align generated files with latest official best practices
